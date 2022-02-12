@@ -9,10 +9,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -127,7 +124,7 @@ public class RegisterActivity extends AppCompatActivity {
             SQLiteDatabase bd = admin.getWritableDatabase();
 
             ContentValues register = new ContentValues();
-            register.put("codigo", getInputCodeUpn());
+            register.put("codigoupn", getInputCodeUpn());
             register.put("dni", getInputDNI());
             register.put("nombre", getInputNameLastName());
             register.put("genero", getSelectGender());//(0:Hombre, 1:Mujer)
@@ -152,7 +149,7 @@ public class RegisterActivity extends AppCompatActivity {
         if (checkBoxJava.isChecked()) {
             java = '1';
         }
-        return cSharp + "," + cPlusPlus + "," + java;
+        return cSharp + "|" + cPlusPlus + "|" + java;
     }
 
     private void cleanView() {

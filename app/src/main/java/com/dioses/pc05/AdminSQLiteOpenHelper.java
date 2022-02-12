@@ -14,7 +14,7 @@ public class AdminSQLiteOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL("create table matricula(codigo text primary key, dni text, nombres text, genero int,curso text)");
+        sqLiteDatabase.execSQL("create table matricula(rowid integer primary key autoincrement ,codigoupn text, dni text, nombre text, genero int, curso text)");
         //sqLiteDatabase.execSQL("create table curso(idcurso int primary key, nombre text)");
     }
 

@@ -22,11 +22,9 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, RegisterActivity.class);
             startActivity(intent);
         });
-        buttonOptionSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
+        buttonOptionSearch.setOnClickListener(view -> {
+            Intent intent = new Intent(this, SearchEditActivity.class);
+            startActivity(intent);
         });
     }
 
