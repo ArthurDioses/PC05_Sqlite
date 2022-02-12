@@ -2,6 +2,7 @@ package com.dioses.pc05;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ public class SearchEditActivity extends AppCompatActivity {
     private RadioButton radioButtonMan, radioButtonWoman;
     private CheckBox checkBoxCSharp, checkBoxCPlusPlus, checkBoxJava;
     private Button btnToggleCode, btnToggleDni;
+    private Button btnSearch, btnEdit, btnUpdate, btnRemove;
 
     private int optionSelected = 0;//0:Por código | 1:Por Dni
 
@@ -56,6 +58,12 @@ public class SearchEditActivity extends AppCompatActivity {
         //ButtonToggle match
         btnToggleCode = findViewById(R.id.btn_toggle_code);
         btnToggleDni = findViewById(R.id.btn_toggle_dni);
+
+        //Button match
+        btnSearch = findViewById(R.id.btn_search);
+        btnEdit = findViewById(R.id.btn_edit);
+        btnUpdate = findViewById(R.id.btn_update);
+        btnRemove = findViewById(R.id.btn_remove);
 
         listeners();
         setToggle(1);
@@ -184,13 +192,64 @@ public class SearchEditActivity extends AppCompatActivity {
 
             if (fila.getString(3).equals("0")) {
                 radioButtonMan.setChecked(true);
-            } else {
+            }
+            if (fila.getString(3).equals("1")) {
                 radioButtonWoman.setChecked(true);
             }
             renderCheckBox(fila.getString(4));
+            btnEdit.setVisibility(View.VISIBLE);
+            btnRemove.setVisibility(View.VISIBLE);
         } else {
             Toast.makeText(this, "No existe articulo para ese código", Toast.LENGTH_SHORT).show();
+            btnEdit.setVisibility(View.GONE);
+            btnUpdate.setVisibility(View.GONE);
         }
+    }
+
+    public void editFields(View view) {
+        tilCodeUpn.setEnabled(true);
+        tilDni.setEnabled(true);
+        tilNameLastname.setEnabled(true);
+        radioButtonMan.setEnabled(true);
+        radioButtonWoman.setEnabled(true);
+        checkBoxCSharp.setEnabled(true);
+        checkBoxCPlusPlus.setEnabled(true);
+        checkBoxJava.setEnabled(true);
+
+        btnSearch.setVisibility(View.GONE);
+        btnEdit.setVisibility(View.GONE);
+        btnUpdate.setVisibility(View.VISIBLE);
+        btnRemove.setVisibility(View.GONE);
+    }
+
+    public void modify(View view) {
+        if (isValidaFields()) {
+            AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(this, "upn", null, 1);
+            SQLiteDatabase bd = admin.getWritableDatabase();
+
+            ContentValues register = new ContentValues();
+            register.put("codigoupn", getInputCodeUpn());
+            register.put("dni", getInputDNI());
+            register.put("nombre", getInputNameLastName());
+            register.put("genero", getSelectGender());//(0:Hombre, 1:Mujer)
+            register.put("curso", getCourses());//(0,0,0) c#,c++,java -> 0:no, 1:si
+            int cant = bd.update("matricula", register, "codigoupn='" + getInputCodeUpn() + "'", null);
+            bd.close();
+            if (cant == 1) {
+                Toast.makeText(this, "Se modificaron los datos", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "No existe articulo con el código ingresado", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public void deleteByCode(View view) {
+        AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(this, "upn", null, 1);
+        SQLiteDatabase bd = admin.getWritableDatabase();
+        bd.delete("matricula", "codigoupn='" + getInputCodeUpn() + "'", null);
+        bd.close();
+        cleanView();
+        Toast.makeText(this, "Se eliminó la matrícula", Toast.LENGTH_SHORT).show();
 
     }
 
@@ -205,6 +264,22 @@ public class SearchEditActivity extends AppCompatActivity {
         return !data.equals("0");
     }
 
+    private String getCourses() {
+        char cSharp = '0';
+        char cPlusPlus = '0';
+        char java = '0';
+        if (checkBoxCSharp.isChecked()) {
+            cSharp = '1';
+        }
+        if (checkBoxCPlusPlus.isChecked()) {
+            cPlusPlus = '1';
+        }
+        if (checkBoxJava.isChecked()) {
+            java = '1';
+        }
+        return cSharp + "-" + cPlusPlus + "-" + java;
+    }
+
     private void cleanView() {
         tiedtCodeUpn.setText("");
         tiedtCodeUpn.setFocusable(true);
@@ -217,6 +292,10 @@ public class SearchEditActivity extends AppCompatActivity {
         checkBoxCSharp.setChecked(false);
         checkBoxCPlusPlus.setChecked(false);
         checkBoxJava.setChecked(false);
+        btnSearch.setVisibility(View.VISIBLE);
+        btnEdit.setVisibility(View.GONE);
+        btnUpdate.setVisibility(View.GONE);
+        btnRemove.setVisibility(View.GONE);
     }
 
     public void finishActivity(View view) {

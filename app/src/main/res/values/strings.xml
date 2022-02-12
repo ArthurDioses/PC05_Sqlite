@@ -19,4 +19,6 @@
     <string name="text_search">Buscar</string>
     <string name="text_by_code">Por Código</string>
     <string name="text_by_dni">Por Dni</string>
+    <string name="text_edit">Editar</string>
+    <string name="text_update">Actualizar</string>
 </resources>
