@@ -149,7 +149,7 @@ public class RegisterActivity extends AppCompatActivity {
         if (checkBoxJava.isChecked()) {
             java = '1';
         }
-        return cSharp + "|" + cPlusPlus + "|" + java;
+        return cSharp + "-" + cPlusPlus + "-" + java;
     }
 
     private void cleanView() {

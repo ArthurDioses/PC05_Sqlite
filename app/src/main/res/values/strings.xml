@@ -16,4 +16,7 @@
     <string name="text_option_search">Buscar matrícula</string>
     <string name="text_option_list">Listar matrículas</string>
     <string name="text_exit">exit</string>
+    <string name="text_search">Buscar</string>
+    <string name="text_by_code">Por Código</string>
+    <string name="text_by_dni">Por Dni</string>
 </resources>
