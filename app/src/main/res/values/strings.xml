@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">PC05</string>
+    <string name="text_title">Matrícula</string>
+    <string name="hint_code_upn">Ingrese código universitario</string>
+    <string name="hint_dni">Ingrese DNI</string>
+    <string name="hint_name_lastname">Ingrese nombre y apellidos</string>
+    <string name="text_gender">Género</string>
+    <string name="text_man">Hombre</string>
+    <string name="text_woman">Mujer</string>
+    <string name="text_courses">Cursos</string>
+    <string name="text_c_sharp">C#</string>
+    <string name="text_c_plus_plus">C++</string>
+    <string name="text_java">JAVA</string>
+    <string name="text_register">Registrar</string>
+    <string name="text_option_register">Registrar nueva matrícula</string>
+    <string name="text_option_search">Buscar matrícula</string>
+    <string name="text_option_list">Listar matrículas</string>
+    <string name="text_exit">exit</string>
 </resources>
