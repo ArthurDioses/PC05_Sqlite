@@ -2,20 +2,26 @@ package com.dioses.pc05;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -24,12 +30,13 @@ public class RegisterActivity extends AppCompatActivity {
     private TextInputEditText tiedtCodeUpn, tiedtDni, tiedtNameLastName;
     private RadioButton radioButtonMan, radioButtonWoman;
     private CheckBox checkBoxCSharp, checkBoxCPlusPlus, checkBoxJava;
+    private Button btnRegister;
+    private ImageButton btnReturn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
 
         //TextInputLayout match
         tilCodeUpn = findViewById(R.id.til_code_upn);
@@ -49,6 +56,12 @@ public class RegisterActivity extends AppCompatActivity {
         checkBoxCSharp = findViewById(R.id.check_box_c_sharp);
         checkBoxCPlusPlus = findViewById(R.id.check_box_c_plus_plus);
         checkBoxJava = findViewById(R.id.check_box_java);
+
+        //Button match
+        btnRegister = findViewById(R.id.btn_register);
+
+        //ImageButton match
+        btnReturn = findViewById(R.id.btn_return);
 
         listeners();
     }
@@ -112,27 +125,33 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+        btnReturn.setOnClickListener(view -> this.finish());
+
+        btnRegister.setOnClickListener(
+                view -> register("http://192.168.0.13:8080/bdupn/insertar_matricula.php"));
     }
 
-    public void finishActivity(View view) {
-        this.finish();
-    }
-
-    public void register(View view) {
+    public void register(String url) {
         if (isValidaFields()) {
-            AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(this, "upn", null, 1);
-            SQLiteDatabase bd = admin.getWritableDatabase();
-
-            ContentValues register = new ContentValues();
-            register.put("codigoupn", getInputCodeUpn());
-            register.put("dni", getInputDNI());
-            register.put("nombre", getInputNameLastName());
-            register.put("genero", getSelectGender());//(0:Hombre, 1:Mujer)
-            register.put("curso", getCourses());//(0,0,0) c#,c++,java -> 0:no, 1:si
-            bd.insert("matricula", null, register);
-            bd.close();
-            cleanView();
-            Toast.makeText(this, "Se cargaron los datos de la matrícula", Toast.LENGTH_SHORT).show();
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                    response -> {
+                        cleanView();
+                        Toast.makeText(this, "Operación exitosa", Toast.LENGTH_SHORT).show();
+                    },
+                    error -> Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show()) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> parametros = new HashMap<>();
+                    parametros.put("codigoupn", getInputCodeUpn());
+                    parametros.put("dni", getInputDNI());
+                    parametros.put("nombre", getInputNameLastName());
+                    parametros.put("genero", String.valueOf(getSelectGender()));
+                    parametros.put("curso", getCourses());
+                    return parametros;
+                }
+            };
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            requestQueue.add(stringRequest);
         }
     }
 

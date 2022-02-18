@@ -1,206 +1,211 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     tools:context=".RegisterActivity">
 
-    <TextView
-        android:id="@+id/text_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:fontFamily="sans-serif-condensed-medium"
-        android:text="@string/text_title"
-        android:textColor="@color/black"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/guideline_end"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideline_begin"
-        app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/image_upn_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/upn_icon"
-        app:layout_constraintEnd_toStartOf="@+id/guideline_end"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_code_upn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="@string/hint_code_upn"
-        app:layout_constraintEnd_toStartOf="@+id/guideline_end"
-        app:layout_constraintStart_toStartOf="@+id/guideline_begin"
-        app:layout_constraintTop_toBottomOf="@+id/image_upn_icon">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tiedt_code_upn"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/text_title"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="textCapSentences"
-            android:maxLength="9" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginTop="16dp"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:text="@string/text_title"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideline_begin"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_dni"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/hint_dni"
-        app:layout_constraintEnd_toStartOf="@+id/guideline_end"
-        app:layout_constraintStart_toStartOf="@+id/guideline_begin"
-        app:layout_constraintTop_toBottomOf="@+id/til_code_upn">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tiedt_dni"
-            android:layout_width="match_parent"
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/image_upn_icon"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="number"
-            android:maxLength="8" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:src="@drawable/upn_icon"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/til_name_lastname"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/hint_name_lastname"
-        app:layout_constraintEnd_toStartOf="@+id/guideline_end"
-        app:layout_constraintStart_toStartOf="@+id/guideline_begin"
-        app:layout_constraintTop_toBottomOf="@+id/til_dni">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/tiedt_name_lastname"
-            android:layout_width="match_parent"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_code_upn"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:maxLength="50" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginTop="8dp"
+            android:hint="@string/hint_code_upn"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+            app:layout_constraintStart_toStartOf="@+id/guideline_begin"
+            app:layout_constraintTop_toBottomOf="@+id/image_upn_icon">
 
-    <TextView
-        android:id="@+id/text_label_gender"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/text_gender"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/guideline_end"
-        app:layout_constraintStart_toStartOf="@+id/guideline_begin"
-        app:layout_constraintTop_toBottomOf="@+id/til_name_lastname" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tiedt_code_upn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapSentences"
+                android:maxLength="9" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toStartOf="@+id/guideline_end"
-        app:layout_constraintStart_toStartOf="@+id/guideline_begin"
-        app:layout_constraintTop_toBottomOf="@+id/text_label_gender">
-
-        <RadioButton
-            android:id="@+id/radio_button_man"
-            android:layout_width="match_parent"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_dni"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/text_man" />
+            android:layout_marginTop="16dp"
+            android:hint="@string/hint_dni"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+            app:layout_constraintStart_toStartOf="@+id/guideline_begin"
+            app:layout_constraintTop_toBottomOf="@+id/til_code_upn">
 
-        <RadioButton
-            android:id="@+id/radio_button_woman"
-            android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tiedt_dni"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="8" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_name_lastname"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/text_woman" />
-    </RadioGroup>
+            android:layout_marginTop="16dp"
+            android:hint="@string/hint_name_lastname"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+            app:layout_constraintStart_toStartOf="@+id/guideline_begin"
+            app:layout_constraintTop_toBottomOf="@+id/til_dni">
 
-    <TextView
-        android:id="@+id/text_label_courses"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/text_courses"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/guideline_end"
-        app:layout_constraintStart_toStartOf="@+id/guideline_begin"
-        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/tiedt_name_lastname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:maxLength="50" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.appcompat.widget.AppCompatCheckBox
-        android:id="@+id/check_box_c_sharp"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_c_sharp"
-        app:layout_constraintEnd_toStartOf="@+id/check_box_c_plus_plus"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@+id/guideline_begin"
-        app:layout_constraintTop_toBottomOf="@+id/text_label_courses" />
+        <TextView
+            android:id="@+id/text_label_gender"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/text_gender"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+            app:layout_constraintStart_toStartOf="@+id/guideline_begin"
+            app:layout_constraintTop_toBottomOf="@+id/til_name_lastname" />
 
-    <androidx.appcompat.widget.AppCompatCheckBox
-        android:id="@+id/check_box_c_plus_plus"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_c_plus_plus"
-        app:layout_constraintEnd_toStartOf="@+id/check_box_java"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/check_box_c_sharp"
-        app:layout_constraintTop_toBottomOf="@+id/text_label_courses" />
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+            app:layout_constraintStart_toStartOf="@+id/guideline_begin"
+            app:layout_constraintTop_toBottomOf="@+id/text_label_gender">
 
-    <androidx.appcompat.widget.AppCompatCheckBox
-        android:id="@+id/check_box_java"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:drawableStart="@drawable/ic_java"
-        app:layout_constraintEnd_toStartOf="@+id/guideline_end"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/check_box_c_plus_plus"
-        app:layout_constraintTop_toBottomOf="@+id/text_label_courses" />
+            <RadioButton
+                android:id="@+id/radio_button_man"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_man" />
 
-    <Button
-        android:id="@+id/btn_register"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:onClick="register"
-        android:text="@string/text_register"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/guideline_end"
-        app:layout_constraintStart_toStartOf="@+id/guideline_begin"
-        app:layout_constraintTop_toBottomOf="@+id/check_box_c_plus_plus" />
+            <RadioButton
+                android:id="@+id/radio_button_woman"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_woman" />
+        </RadioGroup>
 
-    <ImageButton
-        android:id="@+id/btn_return"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="32dp"
-        android:background="@color/white"
-        android:onClick="finishActivity"
-        android:src="@drawable/ic_exit"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/guideline_end"
-        android:contentDescription="@string/text_exit" />
+        <TextView
+            android:id="@+id/text_label_courses"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/text_courses"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+            app:layout_constraintStart_toStartOf="@+id/guideline_begin"
+            app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_begin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="30dp" />
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/check_box_c_sharp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_c_sharp"
+            app:layout_constraintEnd_toStartOf="@+id/check_box_c_plus_plus"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/guideline_begin"
+            app:layout_constraintTop_toBottomOf="@+id/text_label_courses" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_end"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="30dp" />
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/check_box_c_plus_plus"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_c_plus_plus"
+            app:layout_constraintEnd_toStartOf="@+id/check_box_java"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/check_box_c_sharp"
+            app:layout_constraintTop_toBottomOf="@+id/text_label_courses" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/check_box_java"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_java"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/check_box_c_plus_plus"
+            app:layout_constraintTop_toBottomOf="@+id/text_label_courses" />
+
+        <Button
+            android:id="@+id/btn_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/text_register"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+            app:layout_constraintStart_toStartOf="@+id/guideline_begin"
+            app:layout_constraintTop_toBottomOf="@+id/check_box_c_plus_plus" />
+
+        <ImageButton
+            android:id="@+id/btn_return"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="32dp"
+            android:layout_marginBottom="32dp"
+            android:background="@color/white"
+            android:contentDescription="@string/text_exit"
+            android:src="@drawable/ic_exit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+            app:layout_constraintTop_toBottomOf="@+id/btn_register" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_begin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="30dp" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="30dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
