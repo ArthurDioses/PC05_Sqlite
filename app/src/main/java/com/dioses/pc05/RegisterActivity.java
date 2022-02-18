@@ -128,7 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
         btnReturn.setOnClickListener(view -> this.finish());
 
         btnRegister.setOnClickListener(
-                view -> register("http://192.168.0.13:8080/bdupn/insertar_matricula.php"));
+                view -> register(Constant.BASE_URL + "insertar_matricula.php"));
     }
 
     public void register(String url) {

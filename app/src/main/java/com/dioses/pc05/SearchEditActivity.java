@@ -2,9 +2,6 @@ package com.dioses.pc05;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -12,11 +9,18 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Objects;
 
@@ -28,6 +32,7 @@ public class SearchEditActivity extends AppCompatActivity {
     private CheckBox checkBoxCSharp, checkBoxCPlusPlus, checkBoxJava;
     private Button btnToggleCode, btnToggleDni;
     private Button btnSearch, btnEdit, btnUpdate, btnRemove;
+    private ImageButton btnReturn;
 
     private int optionSelected = 0;//0:Por código | 1:Por Dni
 
@@ -64,6 +69,8 @@ public class SearchEditActivity extends AppCompatActivity {
         btnEdit = findViewById(R.id.btn_edit);
         btnUpdate = findViewById(R.id.btn_update);
         btnRemove = findViewById(R.id.btn_remove);
+
+        btnReturn = findViewById(R.id.btn_return);
 
         listeners();
         setToggle(1);
@@ -132,6 +139,11 @@ public class SearchEditActivity extends AppCompatActivity {
             }
         });
 
+        btnReturn.setOnClickListener(view -> this.finish());
+
+        btnSearch.setOnClickListener(view -> searchByCode(getInputCodeUpn()));
+
+        btnEdit.setOnClickListener(view -> editFields());
     }
 
     private void setToggle(int i) {
@@ -140,6 +152,7 @@ public class SearchEditActivity extends AppCompatActivity {
             case 1:
                 btnToggleDni.setEnabled(true);
                 btnToggleCode.setEnabled(false);
+                //0:Por código | 1:Por Dni
                 optionSelected = 0;
                 disableAll(optionSelected);
                 break;
@@ -175,38 +188,38 @@ public class SearchEditActivity extends AppCompatActivity {
         checkBoxJava.setEnabled(false);
     }
 
-    public void searchByCode(View view) {
-        AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(this, "upn", null, 1);
-        SQLiteDatabase bd = admin.getReadableDatabase();
-        Cursor fila;
-        if (optionSelected == 0) {
-            fila = bd.rawQuery("select codigoupn,dni,nombre,genero, curso from matricula where codigoupn='" + getInputCodeUpn() + "'", null);
-        } else {
-            fila = bd.rawQuery("select codigoupn,dni,nombre,genero, curso from matricula where dni='" + getInputDNI() + "'", null);
-        }
+    public void searchByCode(String codeupn) {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Constant.ENDPOINT_SEARCH_BY_CODE_UPN + codeupn, response -> {
+            JSONObject jsonObject;
+            for (int i = 0; i < response.length(); i++) {
+                try {
+                    jsonObject = response.getJSONObject(i);
+                    tiedtCodeUpn.setText(jsonObject.getString("codigoupn"));
+                    tiedtDni.setText(jsonObject.getString("dni"));
+                    tiedtNameLastName.setText(jsonObject.getString("nombre"));
+                    String dataGender = jsonObject.getString("genero");
+                    if (dataGender.equals("0")) {
+                        radioButtonMan.setChecked(true);
+                    }
+                    if (dataGender.equals("1")) {
+                        radioButtonWoman.setChecked(true);
+                    }
 
-        if (fila.moveToFirst()) {
-            tiedtCodeUpn.setText(fila.getString(0));
-            tiedtDni.setText(fila.getString(1));
-            tiedtNameLastName.setText(fila.getString(2));
+                    renderCheckBox(jsonObject.getString("curso"));
+                    btnEdit.setVisibility(View.VISIBLE);
+                    btnRemove.setVisibility(View.VISIBLE);
 
-            if (fila.getString(3).equals("0")) {
-                radioButtonMan.setChecked(true);
+                } catch (JSONException e) {
+                    Toast.makeText(SearchEditActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
             }
-            if (fila.getString(3).equals("1")) {
-                radioButtonWoman.setChecked(true);
-            }
-            renderCheckBox(fila.getString(4));
-            btnEdit.setVisibility(View.VISIBLE);
-            btnRemove.setVisibility(View.VISIBLE);
-        } else {
-            Toast.makeText(this, "No existe articulo para ese código", Toast.LENGTH_SHORT).show();
-            btnEdit.setVisibility(View.GONE);
-            btnUpdate.setVisibility(View.GONE);
-        }
+        }, error -> Toast.makeText(SearchEditActivity.this, "ERRROR DE CONEXIÓN", Toast.LENGTH_SHORT).show());
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(jsonArrayRequest);
+
     }
 
-    public void editFields(View view) {
+    public void editFields() {
         tilCodeUpn.setEnabled(true);
         tilDni.setEnabled(true);
         tilNameLastname.setEnabled(true);
@@ -222,37 +235,39 @@ public class SearchEditActivity extends AppCompatActivity {
         btnRemove.setVisibility(View.GONE);
     }
 
-    public void modify(View view) {
-        if (isValidaFields()) {
-            AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(this, "upn", null, 1);
-            SQLiteDatabase bd = admin.getWritableDatabase();
-
-            ContentValues register = new ContentValues();
-            register.put("codigoupn", getInputCodeUpn());
-            register.put("dni", getInputDNI());
-            register.put("nombre", getInputNameLastName());
-            register.put("genero", getSelectGender());//(0:Hombre, 1:Mujer)
-            register.put("curso", getCourses());//(0,0,0) c#,c++,java -> 0:no, 1:si
-            int cant = bd.update("matricula", register, "codigoupn='" + getInputCodeUpn() + "'", null);
-            bd.close();
-            if (cant == 1) {
-                Toast.makeText(this, "Se modificaron los datos", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "No existe articulo con el código ingresado", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    public void deleteByCode(View view) {
-        AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(this, "upn", null, 1);
-        SQLiteDatabase bd = admin.getWritableDatabase();
-        bd.delete("matricula", "codigoupn='" + getInputCodeUpn() + "'", null);
-        bd.close();
-        cleanView();
-        Toast.makeText(this, "Se eliminó la matrícula", Toast.LENGTH_SHORT).show();
-
-    }
-
+    /**
+     * IMPLEMENT WITH WEBSERVICE
+     * public void modify(View view) {
+     * if (isValidaFields()) {
+     * AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(this, "upn", null, 1);
+     * SQLiteDatabase bd = admin.getWritableDatabase();
+     * <p>
+     * ContentValues register = new ContentValues();
+     * register.put("codigoupn", getInputCodeUpn());
+     * register.put("dni", getInputDNI());
+     * register.put("nombre", getInputNameLastName());
+     * register.put("genero", getSelectGender());//(0:Hombre, 1:Mujer)
+     * register.put("curso", getCourses());//(0,0,0) c#,c++,java -> 0:no, 1:si
+     * int cant = bd.update("matricula", register, "codigoupn='" + getInputCodeUpn() + "'", null);
+     * bd.close();
+     * if (cant == 1) {
+     * Toast.makeText(this, "Se modificaron los datos", Toast.LENGTH_SHORT).show();
+     * } else {
+     * Toast.makeText(this, "No existe articulo con el código ingresado", Toast.LENGTH_SHORT).show();
+     * }
+     * }
+     * }
+     * <p>
+     * public void deleteByCode(View view) {
+     * AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(this, "upn", null, 1);
+     * SQLiteDatabase bd = admin.getWritableDatabase();
+     * bd.delete("matricula", "codigoupn='" + getInputCodeUpn() + "'", null);
+     * bd.close();
+     * cleanView();
+     * Toast.makeText(this, "Se eliminó la matrícula", Toast.LENGTH_SHORT).show();
+     * <p>
+     * }
+     */
     private void renderCheckBox(String string) {
         String[] nameSplit = string.split("-");
         checkBoxCSharp.setChecked(isCheckedSelected(nameSplit[0]));
@@ -296,10 +311,6 @@ public class SearchEditActivity extends AppCompatActivity {
         btnEdit.setVisibility(View.GONE);
         btnUpdate.setVisibility(View.GONE);
         btnRemove.setVisibility(View.GONE);
-    }
-
-    public void finishActivity(View view) {
-        this.finish();
     }
 
     private int getSelectGender() {
