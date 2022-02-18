@@ -13,8 +13,11 @@ import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -22,6 +25,8 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class SearchEditActivity extends AppCompatActivity {
@@ -150,6 +155,10 @@ public class SearchEditActivity extends AppCompatActivity {
         });
 
         btnEdit.setOnClickListener(view -> editFields());
+
+        btnUpdate.setOnClickListener(view -> modify(Constant.ENDPOINT_UPDATE));
+
+        btnRemove.setOnClickListener(view -> deleteByCode(Constant.ENDPOINT_DELETE));
     }
 
     private void setToggle(int i) {
@@ -194,8 +203,8 @@ public class SearchEditActivity extends AppCompatActivity {
         checkBoxJava.setEnabled(false);
     }
 
-    public void searchBy(String endPoint) {
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(endPoint, response -> {
+    public void searchBy(String endpoint) {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(endpoint, response -> {
             JSONObject jsonObject;
             for (int i = 0; i < response.length(); i++) {
                 try {
@@ -241,39 +250,48 @@ public class SearchEditActivity extends AppCompatActivity {
         btnRemove.setVisibility(View.GONE);
     }
 
-    /**
-     * IMPLEMENT WITH WEBSERVICE
-     * public void modify(View view) {
-     * if (isValidaFields()) {
-     * AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(this, "upn", null, 1);
-     * SQLiteDatabase bd = admin.getWritableDatabase();
-     * <p>
-     * ContentValues register = new ContentValues();
-     * register.put("codigoupn", getInputCodeUpn());
-     * register.put("dni", getInputDNI());
-     * register.put("nombre", getInputNameLastName());
-     * register.put("genero", getSelectGender());//(0:Hombre, 1:Mujer)
-     * register.put("curso", getCourses());//(0,0,0) c#,c++,java -> 0:no, 1:si
-     * int cant = bd.update("matricula", register, "codigoupn='" + getInputCodeUpn() + "'", null);
-     * bd.close();
-     * if (cant == 1) {
-     * Toast.makeText(this, "Se modificaron los datos", Toast.LENGTH_SHORT).show();
-     * } else {
-     * Toast.makeText(this, "No existe articulo con el código ingresado", Toast.LENGTH_SHORT).show();
-     * }
-     * }
-     * }
-     * <p>
-     * public void deleteByCode(View view) {
-     * AdminSQLiteOpenHelper admin = new AdminSQLiteOpenHelper(this, "upn", null, 1);
-     * SQLiteDatabase bd = admin.getWritableDatabase();
-     * bd.delete("matricula", "codigoupn='" + getInputCodeUpn() + "'", null);
-     * bd.close();
-     * cleanView();
-     * Toast.makeText(this, "Se eliminó la matrícula", Toast.LENGTH_SHORT).show();
-     * <p>
-     * }
-     */
+    public void modify(String endpoint) {
+        if (isValidaFields()) {
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, endpoint,
+                    response -> {
+                        cleanView();
+                        Toast.makeText(this, "Operación exitosa", Toast.LENGTH_SHORT).show();
+                    },
+                    error -> Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show()) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> parametros = new HashMap<>();
+                    parametros.put("codigoupn", getInputCodeUpn());
+                    parametros.put("dni", getInputDNI());
+                    parametros.put("nombre", getInputNameLastName());
+                    parametros.put("genero", String.valueOf(getSelectGender()));
+                    parametros.put("curso", getCourses());
+                    return parametros;
+                }
+            };
+            RequestQueue requestQueue = Volley.newRequestQueue(this);
+            requestQueue.add(stringRequest);
+        }
+    }
+
+    public void deleteByCode(String endpoint) {
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, endpoint,
+                response -> {
+                    cleanView();
+                    Toast.makeText(this, "LA MATRÍCULA FUE ELIMINADA", Toast.LENGTH_SHORT).show();
+                },
+                error -> Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show()) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> parametros = new HashMap<>();
+                parametros.put("codigoupn", getInputCodeUpn());
+                return parametros;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        requestQueue.add(stringRequest);
+    }
+
     private void renderCheckBox(String string) {
         String[] nameSplit = string.split("-");
         checkBoxCSharp.setChecked(isCheckedSelected(nameSplit[0]));
