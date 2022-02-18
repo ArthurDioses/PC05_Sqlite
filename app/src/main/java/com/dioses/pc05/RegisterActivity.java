@@ -128,7 +128,7 @@ public class RegisterActivity extends AppCompatActivity {
         btnReturn.setOnClickListener(view -> this.finish());
 
         btnRegister.setOnClickListener(
-                view -> register(Constant.BASE_URL + "insertar_matricula.php"));
+                view -> register(Constant.ENDPOINT_REGISTER));
     }
 
     public void register(String url) {
