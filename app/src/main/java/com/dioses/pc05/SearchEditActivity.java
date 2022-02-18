@@ -141,7 +141,13 @@ public class SearchEditActivity extends AppCompatActivity {
 
         btnReturn.setOnClickListener(view -> this.finish());
 
-        btnSearch.setOnClickListener(view -> searchByCode(getInputCodeUpn()));
+        btnSearch.setOnClickListener(view -> {
+            if (optionSelected == 0) {
+                searchBy(Constant.ENDPOINT_SEARCH_BY_CODE_UPN + getInputCodeUpn());
+            } else {
+                searchBy(Constant.ENDPOINT_SEARCH_BY_DNI + getInputDNI());
+            }
+        });
 
         btnEdit.setOnClickListener(view -> editFields());
     }
@@ -188,8 +194,8 @@ public class SearchEditActivity extends AppCompatActivity {
         checkBoxJava.setEnabled(false);
     }
 
-    public void searchByCode(String codeupn) {
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Constant.ENDPOINT_SEARCH_BY_CODE_UPN + codeupn, response -> {
+    public void searchBy(String endPoint) {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(endPoint, response -> {
             JSONObject jsonObject;
             for (int i = 0; i < response.length(); i++) {
                 try {
