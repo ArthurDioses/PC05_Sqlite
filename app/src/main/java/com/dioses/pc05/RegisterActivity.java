@@ -6,10 +6,13 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -32,6 +35,9 @@ public class RegisterActivity extends AppCompatActivity {
     private CheckBox checkBoxCSharp, checkBoxCPlusPlus, checkBoxJava;
     private Button btnRegister;
     private ImageButton btnReturn;
+
+    private ProgressBar progressBarLoading;
+    private RadioGroup radioGroupGender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +69,11 @@ public class RegisterActivity extends AppCompatActivity {
         //ImageButton match
         btnReturn = findViewById(R.id.btn_return);
 
+        //ProgressBar match
+        progressBarLoading = findViewById(R.id.progress_loading);
+
+        //RadioGroup match
+        radioGroupGender = findViewById(R.id.radioGroup);
         listeners();
     }
 
@@ -78,7 +89,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() == 9) {
-                    tiedtDni.setFocusable(true);
+                    tiedtDni.requestFocus();
                 }
             }
 
@@ -97,7 +108,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() == 8) {
-                    tiedtNameLastName.setFocusable(true);
+                    tiedtNameLastName.requestFocus();
                 }
             }
 
@@ -133,12 +144,17 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void register(String url) {
         if (isValidaFields()) {
+            showLoading();
             StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                     response -> {
                         cleanView();
+                        hideLoading();
                         Toast.makeText(this, "Operación exitosa", Toast.LENGTH_SHORT).show();
                     },
-                    error -> Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show()) {
+                    error -> {
+                        hideLoading();
+                        Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+                    }) {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> parametros = new HashMap<>();
@@ -173,12 +189,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void cleanView() {
         tiedtCodeUpn.setText("");
-        tiedtCodeUpn.setFocusable(true);
+        tiedtCodeUpn.requestFocus();
         tiedtDni.setText("");
         tiedtNameLastName.setText("");
 
-        radioButtonMan.setChecked(false);
-        radioButtonWoman.setChecked(false);
+        radioGroupGender.clearCheck();
 
         checkBoxCSharp.setChecked(false);
         checkBoxCPlusPlus.setChecked(false);
@@ -187,7 +202,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private int getSelectGender() {
-        return radioButtonMan.isChecked() ? 0 : 1;
+        return radioGroupGender.getCheckedRadioButtonId() == R.id.radio_button_man ? 0 : 1;
     }
 
     private boolean isValidaFields() {
@@ -239,7 +254,6 @@ public class RegisterActivity extends AppCompatActivity {
         return Objects.requireNonNull(tiedtNameLastName.getText()).toString();
     }
 
-
     private void setErrorField(TextInputLayout textInputLayout, String messaerror) {
         textInputLayout.setErrorEnabled(false);
         textInputLayout.setError(messaerror);
@@ -248,5 +262,13 @@ public class RegisterActivity extends AppCompatActivity {
     private void cleanErrorField(TextInputLayout textInputLayout) {
         textInputLayout.setErrorEnabled(true);
         textInputLayout.setError(null);
+    }
+
+    private void showLoading() {
+        progressBarLoading.setVisibility(View.VISIBLE);
+    }
+
+    private void hideLoading() {
+        progressBarLoading.setVisibility(View.GONE);
     }
 }

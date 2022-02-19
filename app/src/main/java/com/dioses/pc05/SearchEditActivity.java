@@ -10,7 +10,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -38,6 +40,8 @@ public class SearchEditActivity extends AppCompatActivity {
     private Button btnToggleCode, btnToggleDni;
     private Button btnSearch, btnEdit, btnUpdate, btnRemove;
     private ImageButton btnReturn;
+    private ProgressBar progressBarLoading;
+    private RadioGroup radioGroupGender;
 
     private int optionSelected = 0;//0:Por código | 1:Por Dni
 
@@ -77,6 +81,12 @@ public class SearchEditActivity extends AppCompatActivity {
 
         btnReturn = findViewById(R.id.btn_return);
 
+        //ProgressBar match
+        progressBarLoading = findViewById(R.id.progress_loading);
+
+        //RadioGroup match
+        radioGroupGender = findViewById(R.id.radioGroup);
+
         listeners();
         setToggle(1);
     }
@@ -97,7 +107,7 @@ public class SearchEditActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() == 9) {
-                    tiedtDni.setFocusable(true);
+                    tiedtDni.requestFocus();
                 }
             }
 
@@ -116,7 +126,7 @@ public class SearchEditActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if (charSequence.length() == 8) {
-                    tiedtNameLastName.setFocusable(true);
+                    tiedtNameLastName.requestFocus();
                 }
             }
 
@@ -149,8 +159,10 @@ public class SearchEditActivity extends AppCompatActivity {
         btnSearch.setOnClickListener(view -> {
             if (optionSelected == 0) {
                 searchBy(Constant.ENDPOINT_SEARCH_BY_CODE_UPN + getInputCodeUpn());
+                tiedtCodeUpn.requestFocus(9);
             } else {
                 searchBy(Constant.ENDPOINT_SEARCH_BY_DNI + getInputDNI());
+                tiedtDni.requestFocus(8);
             }
         });
 
@@ -185,14 +197,14 @@ public class SearchEditActivity extends AppCompatActivity {
         if (option == 0) {
             //Por código
             tilCodeUpn.setEnabled(true);
-            tiedtCodeUpn.setFocusable(true);
+            tiedtCodeUpn.requestFocus();
             tilDni.setEnabled(false);
 
         } else {
             //Por Dni
             tilCodeUpn.setEnabled(false);
             tilDni.setEnabled(true);
-            tiedtDni.setFocusable(true);
+            tiedtDni.requestFocus();
 
         }
         tilNameLastname.setEnabled(false);
@@ -204,6 +216,7 @@ public class SearchEditActivity extends AppCompatActivity {
     }
 
     public void searchBy(String endpoint) {
+        showLoading();
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(endpoint, response -> {
             JSONObject jsonObject;
             for (int i = 0; i < response.length(); i++) {
@@ -213,30 +226,33 @@ public class SearchEditActivity extends AppCompatActivity {
                     tiedtDni.setText(jsonObject.getString("dni"));
                     tiedtNameLastName.setText(jsonObject.getString("nombre"));
                     String dataGender = jsonObject.getString("genero");
-                    if (dataGender.equals("0")) {
-                        radioButtonMan.setChecked(true);
-                    }
-                    if (dataGender.equals("1")) {
-                        radioButtonWoman.setChecked(true);
-                    }
+
+                    radioGroupGender.check(dataGender.equals("0") ? R.id.radio_button_man : R.id.radio_button_woman);
 
                     renderCheckBox(jsonObject.getString("curso"));
                     btnEdit.setVisibility(View.VISIBLE);
                     btnRemove.setVisibility(View.VISIBLE);
-
+                    hideLoading();
                 } catch (JSONException e) {
                     Toast.makeText(SearchEditActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    cleanView();
+                    hideLoading();
                 }
             }
-        }, error -> Toast.makeText(SearchEditActivity.this, "ERRROR DE CONEXIÓN", Toast.LENGTH_SHORT).show());
+        }, error -> {
+            Toast.makeText(SearchEditActivity.this, "ERRROR DE CONEXIÓN", Toast.LENGTH_SHORT).show();
+            cleanView();
+            hideLoading();
+        });
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(jsonArrayRequest);
 
     }
 
     public void editFields() {
-        tilCodeUpn.setEnabled(true);
+        tilCodeUpn.setEnabled(false);
         tilDni.setEnabled(true);
+        tiedtDni.requestFocus(9);
         tilNameLastname.setEnabled(true);
         radioButtonMan.setEnabled(true);
         radioButtonWoman.setEnabled(true);
@@ -252,12 +268,18 @@ public class SearchEditActivity extends AppCompatActivity {
 
     public void modify(String endpoint) {
         if (isValidaFields()) {
+            showLoading();
             StringRequest stringRequest = new StringRequest(Request.Method.POST, endpoint,
                     response -> {
                         cleanView();
+                        hideLoading();
                         Toast.makeText(this, "Operación exitosa", Toast.LENGTH_SHORT).show();
                     },
-                    error -> Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show()) {
+                    error -> {
+                        hideLoading();
+                        Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+
+                    }) {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> parametros = new HashMap<>();
@@ -275,12 +297,17 @@ public class SearchEditActivity extends AppCompatActivity {
     }
 
     public void deleteByCode(String endpoint) {
+        showLoading();
         StringRequest stringRequest = new StringRequest(Request.Method.POST, endpoint,
                 response -> {
                     cleanView();
                     Toast.makeText(this, "LA MATRÍCULA FUE ELIMINADA", Toast.LENGTH_SHORT).show();
+                    hideLoading();
                 },
-                error -> Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show()) {
+                error -> {
+                    Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
+                    hideLoading();
+                }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> parametros = new HashMap<>();
@@ -321,12 +348,11 @@ public class SearchEditActivity extends AppCompatActivity {
 
     private void cleanView() {
         tiedtCodeUpn.setText("");
-        tiedtCodeUpn.setFocusable(true);
+        tiedtCodeUpn.requestFocus();
         tiedtDni.setText("");
         tiedtNameLastName.setText("");
 
-        radioButtonMan.setChecked(false);
-        radioButtonWoman.setChecked(false);
+        radioGroupGender.clearCheck();
 
         checkBoxCSharp.setChecked(false);
         checkBoxCPlusPlus.setChecked(false);
@@ -335,10 +361,11 @@ public class SearchEditActivity extends AppCompatActivity {
         btnEdit.setVisibility(View.GONE);
         btnUpdate.setVisibility(View.GONE);
         btnRemove.setVisibility(View.GONE);
+        disableAll(optionSelected);
     }
 
     private int getSelectGender() {
-        return radioButtonMan.isChecked() ? 0 : 1;
+        return radioGroupGender.getCheckedRadioButtonId() == R.id.radio_button_man ? 0 : 1;
     }
 
     private boolean isValidaFields() {
@@ -398,5 +425,13 @@ public class SearchEditActivity extends AppCompatActivity {
     private void cleanErrorField(TextInputLayout textInputLayout) {
         textInputLayout.setErrorEnabled(true);
         textInputLayout.setError(null);
+    }
+
+    private void showLoading() {
+        progressBarLoading.setVisibility(View.VISIBLE);
+    }
+
+    private void hideLoading() {
+        progressBarLoading.setVisibility(View.GONE);
     }
 }
